@@ -1,19 +1,5 @@
 # Secretária Telegram — v2
 
-Ampliação com conversa pelo mesmo bot, leitura/edição de avisos no Notion, propostas de semana e briefing diário às 08:00 (São Paulo).
-
-A conversa usa **Codex CLI autenticado com a assinatura ChatGPT**, sem API key. O serviço Codex é separado e não recebe tokens Notion/Telegram nem acesso ao banco. O worker existente permanece como único consumidor getUpdates e conserva os avisos/confirmacões.
-
-Leia [o guia de atualização v2](docs/UPGRADE-V2.md) antes de implantar sobre uma instalação ativa. Preserve `.env`, o nome do projeto e o volume SQLite; faça backup primeiro. A nova migração acrescenta tabelas sem recriar o banco anterior.
-
-**Estado:** implementação e testes locais concluídos; autenticação, containers novos e teste real v2 ainda precisam ser feitos na VPS. Google Calendar precisa de conexão própria. Janelas de disponibilidade desconhecidas no Notion impedem aplicação de blocos; a proposta permanece provisória.
-
-O briefing das 08:00 usa fatos estruturados sem invocar o Codex. O raciocínio conversacional/planejamento usa o Codex, sujeito aos limites da assinatura. Não há fallback para API paga.
-
-As seções abaixo documentam o motor de notificações original, que continua presente. Para a ampliação, use o guia v2.
-
----
-
 # Secretária — Telegram + Notion
 
 Aplicação pessoal executável: Django Admin, SQLite e worker único com agenda durável. Suporta tarefas, objetivos/metas (alvo e progresso registrados), mensagens com data/hora, repetição insistente e recorrência a cada N dias. Sem chamadas a modelos de IA durante a operação.
