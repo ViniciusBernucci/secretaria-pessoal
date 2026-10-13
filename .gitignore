@@ -1,0 +1,50 @@
+# Credenciais e configurações locais (inclusive cópias e variantes por ambiente).
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+.envrc
+.aws/
+.codex/
+.agents/
+auth.json
+credentials.json
+credentials-*.json
+client_secret*.json
+service-account*.json
+service_account*.json
+token.json
+tokens.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Estes arquivos contêm IDs ou links pessoais do Notion.
+# sources.py é essencial: recrie-o a partir de sources.example.py em cada clone.
+/conversation/sources.py
+/docs/UPGRADE-V2.md
+
+# Dados locais, histórico de conversas, backups e registros de execução.
+*.sqlite3*
+*.sqlite*
+*.db
+*.db-*
+*.sql
+*.dump
+*.bak
+*.log
+logs/
+data/
+backups/
+google-calendar.env
+
+# Arquivos gerados e ambientes virtuais.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+staticfiles/

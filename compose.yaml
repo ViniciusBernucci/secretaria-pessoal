@@ -1,0 +1,83 @@
+name: secretaria-telegram
+x-app: &app
+  build: .
+  image: secretaria-telegram:local
+  env_file: ${ENV_FILE:-.env}
+  environment:
+    DB_PATH: /data/db.sqlite3
+  volumes:
+    - secretaria-data:/data
+  restart: unless-stopped
+  init: true
+  read_only: true
+  tmpfs:
+    - /tmp
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+services:
+  web:
+    <<: *app
+    ports:
+      - "127.0.0.1:8097:8000"
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  worker:
+    <<: *app
+    command: [python, manage.py, worker]
+    healthcheck:
+      test: [CMD, python, manage.py, worker_health]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+  assistant:
+    <<: *app
+    command: [python, manage.py, assistant_worker]
+    depends_on: [codex]
+    environment:
+      DB_PATH: /data/db.sqlite3
+      ASSISTANT_GATEWAY_URL: http://codex:8001
+    healthcheck:
+      test: [CMD, python, manage.py, assistant_health]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 180s
+  codex:
+    build:
+      context: .
+      dockerfile: Dockerfile.codex
+    image: secretaria-codex:local
+    environment:
+      CODEX_HOME: /auth
+      ASSISTANT_GATEWAY_KEY: ${ASSISTANT_GATEWAY_KEY}
+      CODEX_MODEL: ${CODEX_MODEL:-}
+    volumes:
+      - secretaria-codex-auth:/auth
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health')"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+volumes:
+  secretaria-data:
+  secretaria-codex-auth:
